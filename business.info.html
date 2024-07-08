@@ -1,0 +1,360 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Information</title>
+    <style>
+        table {
+            width: 50%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: whitesmoke;
+        }
+        th, td {
+            border: 1px solid #000000;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: aquamarine;
+        }
+    </style>
+</head>
+<body style="background-color:#ebc999;">
+    <header style="background-color:#4d3227;">
+        <h1 style="text-align:center; color:silver">Business Information of <b><i><u><div id="headingContainer"></div></u></i></b></h1>
+    </header>
+    <main>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                var headingContainer = document.getElementById('headingContainer');
+                var headingText = localStorage.getItem('headingText');
+                headingContainer.textContent = headingText || 'No Business Name Entered. Please enter Business Name on the input page.';
+            });
+
+            function saveData() {
+    // Collect all data as previously described
+
+    // Send data to the server
+    fetch('display_data.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            contact_name: localStorage.getItem('contact_name'),
+            email: localStorage.getItem('em'),
+            phone_number: localStorage.getItem('phone_number'),
+            bus_details: localStorage.getItem('bus_details'),
+            financial_data: localStorage.getItem('financial_data'),
+            investor_data: localStorage.getItem('investor_data'),
+            additional_info: localStorage.getItem('additional_data')
+        })
+    })
+    .then(response => response.json())
+    .then(data => console.log('Success:', data))
+    .catch((error) => console.error('Error:', error));
+}
+
+                var radios = document.querySelectorAll('input[type="radio"]:checked');
+                radios.forEach(function(radio) {
+                    localStorage.setItem(radio.name, radio.value);
+                });
+
+                saveTableData('dynamicTable', 'financial_data');
+                saveTableData('tableContainer2', 'investor_data');
+                saveTableData('tableContainer3', 'additional_data');
+            
+
+            function saveTableData(tableId, storageKey) {
+                var table = document.getElementById(tableId);
+                var rows = table.querySelectorAll('tr');
+                var tableData = [];
+                rows.forEach(function(row, index) {
+                    if (index > 0) {
+                        var cells = row.querySelectorAll('td');
+                        var rowData = [];
+                        cells.forEach(function(cell) {
+                            rowData.push(cell.textContent);
+                        });
+                        tableData.push(rowData);
+                    }
+                });
+                localStorage.setItem(storageKey, JSON.stringify(tableData));
+            }
+
+            function addToTable(tableId, storageKeyPrefix) {
+                var question = document.getElementById("questionInput").value;
+                var answer = document.getElementById("answerInput").value;
+
+                if (question.trim() === "" || answer.trim() === "") {
+                    alert("Please enter both a Financial Type and a Value");
+                    return;
+                }
+
+                var tableContainer = document.getElementById("tableContainer");
+                var table = document.getElementById(tableId);
+                if (!table) {
+                    table = document.createElement("table");
+                    table.id = tableId;
+
+                    var headerRow = document.createElement("tr");
+                    var questionHeader = document.createElement("th");
+                    questionHeader.textContent = "Financial Type";
+                    var answerHeader = document.createElement("th");
+                    answerHeader.textContent = "Financial Value";
+                    headerRow.appendChild(questionHeader);
+                    headerRow.appendChild(answerHeader);
+                    table.appendChild(headerRow);
+                }
+
+                var row = document.createElement("tr");
+                var questionCell = document.createElement("td");
+                questionCell.textContent = question;
+                var answerCell = document.createElement("td");
+                answerCell.textContent = answer;
+                row.appendChild(questionCell);
+                row.appendChild(answerCell);
+                table.appendChild(row);
+
+                tableContainer.innerHTML = "";
+                tableContainer.appendChild(table);
+
+                saveTableData(tableId, storageKeyPrefix + '_tableData');
+
+                document.getElementById("questionInput").value = "";
+                document.getElementById("answerInput").value = "";
+            }
+
+            function addToTable2() {
+                var question = document.getElementById("Person1").value;
+                var answer = document.getElementById("Value1").value;
+
+                if (question.trim() === "" || answer.trim() === "") {
+                    alert("Please enter both a Name and an Amount");
+                    return;
+                }
+
+                var tableContainer = document.getElementById("tableContainer2");
+                var table = tableContainer.querySelector("table");
+                if (!table) {
+                    table = document.createElement("table");
+                    table.id = "tableContainer2";
+
+                    var headerRow = document.createElement("tr");
+                    var questionHeader = document.createElement("th");
+                    questionHeader.textContent = "Name of Person:";
+                    var answerHeader = document.createElement("th");
+                    answerHeader.textContent = "Amount Invested:";
+                    headerRow.appendChild(questionHeader);
+                    headerRow.appendChild(answerHeader);
+                    table.appendChild(headerRow);
+                }
+
+                var row = document.createElement("tr");
+                var questionCell = document.createElement("td");
+                questionCell.textContent = question;
+                var answerCell = document.createElement("td");
+                answerCell.textContent = answer;
+                row.appendChild(questionCell);
+                row.appendChild(answerCell);
+                table.appendChild(row);
+
+                tableContainer.innerHTML = "";
+                tableContainer.appendChild(table);
+
+                saveTableData("tableContainer2", 'investor_data');
+
+                document.getElementById("Person1").value = "";
+                document.getElementById("Value1").value = "";
+            }
+
+            function addToTable3() {
+                var question = document.getElementById("additional_heading").value;
+                var answer = document.getElementById("additional_answer").value;
+
+                if (question.trim() === "" || answer.trim() === "") {
+                    alert("Please enter both a Topic and Information");
+                    return;
+                }
+
+                var tableContainer = document.getElementById("tableContainer3");
+                var table = tableContainer.querySelector("table");
+                if (!table) {
+                    table = document.createElement("table");
+                    table.id = "tableContainer3";
+
+                    var headerRow = document.createElement("tr");
+                    var questionHeader = document.createElement("th");
+                    questionHeader.textContent = "Heading:";
+                    var answerHeader = document.createElement("th");
+                    answerHeader.textContent = "Information:";
+                    headerRow.appendChild(questionHeader);
+                    headerRow.appendChild(answerHeader);
+                    table.appendChild(headerRow);
+                }
+
+                var row = document.createElement("tr");
+                var questionCell = document.createElement("td");
+                questionCell.textContent = question;
+                var answerCell = document.createElement("td");
+                answerCell.textContent = answer;
+                row.appendChild(questionCell);
+                row.appendChild(answerCell);
+                table.appendChild(row);
+
+                tableContainer.innerHTML = "";
+                tableContainer.appendChild(table);
+
+                saveTableData("tableContainer3", 'additional_data');
+
+                document.getElementById("additional_heading").value = "";
+                document.getElementById("additional_answer").value = "";
+            }
+        </script>
+        
+        <a href="page2.html">
+            <button style="background-color: darkorange;" onclick="saveData()">Return To Previous Page</button>
+        </a>
+
+        <form onsubmit="saveData(); return false;">
+            <h3>Company Contact:</h3>
+            <label for="contact_name">Name:</label>
+            <input type="text" id="contact_name" name="contact_name" placeholder="Tom Smith"><br>
+            <label for="em">Email: </label>
+            <input type="email" id="em" name="em" placeholder="Example@gmail.com"><br>
+            <label for="phone_number">Phone Number:</label>
+            <input type="text" id="phone_number" name="phone_number" placeholder="087-111-1111"><br>
+
+            <h3>Describe the Company's Product/Service</h3>
+            <label for="bus_details">Business Details:</label>
+            <textarea id="bus_details" name="bus_details" placeholder="This Company's Product is..." 
+              style="width: 100%; min-height: 40px; padding: 10px; font-size: 16px; box-sizing: border-box;"
+              oninput="this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px';"></textarea><br>
+
+            <h2>Lakeside Capital Ltd</h2>
+            <h4>Who is the LCL Leader for this company?</h4>
+            <input type="radio" id="Sean_Corkery" name="lead.1" value="Sean Corkery">
+            <label for="Sean_Corkery">Sean Corkery</label><br>
+            <input type="radio" id="Aongus_Hegarty" name="lead.1" value="Aongus Hegarty">
+            <label for="Aongus_Hegarty">Aongus Hegarty</label><br>
+            <input type="radio" id="Tommy_Geary" name="lead.1" value="Tommy Geary">
+            <label for="Tommy_geary">Tommy Geary</label><br>
+            <input type="radio" id="Tom_Kitt" name="lead.1" value="Tom Kitt">
+            <label for="Tom_Kitt">Tom Kitt</label><br>
+            <input type="radio" id="Tom_Donnellan" name="lead.1" value="Tom Donnellan">
+            <label for="Tom_Donnellan">Tom Donnellan</label><br>
+            <input type="radio" id="Lawrence_Hickey" name="lead.1" value="Lawrence Hickey">
+            <label for="Lawrence_Hickey">Lawrence Hickey</label><br>
+            <input type="radio" id="Pat_Casey" name="lead.1" value="Pat Casey">
+            <label for="Pat_Casey">Pat Casey</label><br><br>
+            <label for="raise">How Much is the Total Raise?</label>
+            <input type="text" id="raise" name="raise" placeholder="Total raise Amount"><br>
+            <label for="equityper">Equity Acquired:</label>
+            <input type="text" id="equityper" name="equityper" placeholder="Enter Equity %"><br><br>
+
+            <h3>Assess The Following Criteria</h3>
+            <p>The Company has a Product or Service in the Market and is Revenue Generating with scaling</p>
+            <input type="radio" id="yes.1" name="form.1" value="Yes">
+            <label for="yes.1">Yes</label>
+            <input type="radio" id="partially1" name="form.1" value="Partially">
+            <label for="partially1">Partially</label>
+            <input type="radio" id="no.1" name="form.1" value="No">
+            <label for="no.1">No</label>
+            <p>The company has a path to profitability within 2 to 3 years</p>
+            <input type="radio" id="yes.2" name="form.2" value="Yes">
+            <label for="yes.2">Yes</label>
+            <input type="radio" id="partially.2" name="form.2" value="Partially">
+            <label for="partially.2">Partially</label>
+            <input type="radio" id="no.2" name="form.2" value="No">
+            <label for="no.2">No</label>
+            <p>Opportunity has an exit/money out in 3 to 6 years</p>
+            <input type="radio" id="yes.3" name="form.3" value="Yes">
+            <label for="yes.3">Yes</label>
+            <input type="radio" id="partially.3" name="form.3" value="Partially">
+            <label for="partially.3">Partially</label>
+            <input type="radio" id="no.3" name="form.3" value="No">
+            <label for="no.3">No</label>
+            <p>The Return is x3 at a minimum (including investment)</p>
+            <input type="radio" id="yes.4" name="form.4" value="Yes">
+            <label for="yes.4">Yes</label>
+            <input type="radio" id="partially.4" name="form.4" value="Partially">
+            <label for="partially.4">Partially</label>
+            <input type="radio" id="no.4" name="form.4" value="No">
+            <label for="no.4">No</label><br>
+            <p>Is this a Business to Business Opportunity</p>
+            <input type="radio" id="yes.5" name="form.5" value="Yes">
+            <label for="yes.5">Yes</label>
+            <input type="radio" id="partially.5" name="form.5" value="Partially">
+            <label for="partially.5">Partially</label>
+            <input type="radio" id="no.5" name="form.5" value="No">
+            <label for="no.5">No</label>
+            <p>Does the company have strong Management Bench Strength/Capabilities</p>
+            <input type="radio" id="yes.6" name="form.6" value="Yes">
+            <label for="yes.6">Yes</label>
+            <input type="radio" id="partially.6" name="form.6" value="Partially">
+            <label for="partially.6">Partially</label>
+            <input type="radio" id="no.6" name="form.6" value="No">
+            <label for="no.6">No</label>
+            <p>Is the opportunity in the right sector</p>
+            <input type="radio" id="yes.7" name="form.7" value="Yes">
+            <label for="yes.7">Yes</label>
+            <input type="radio" id="partially.7" name="form.7" value="Partially">
+            <label for="partially.7">Partially</label>
+            <input type="radio" id="no.7" name="form.7" value="No">
+            <label for="no.7">No</label>
+            <p>Has there been revenue in the last 12 months of €500,000 with a growth rate of 20+%</p>
+            <input type="radio" id="yes.8" name="form.8" value="Yes">
+            <label for="yes.8">Yes</label>
+            <input type="radio" id="partially.8" name="form.8" value="Partially">
+            <label for="partially.8">Partially</label>
+            <input type="radio" id="no.8" name="form.8" value="No">
+            <label for="no.8">No</label><br>
+            <p>Will this give LCL a shareholding level of 2+%</p>
+            <input type="radio" id="yes.9" name="form.9" value="Yes">
+            <label for="yes.9">Yes</label>
+            <input type="radio" id="partially.9" name="form.9" value="Partially">
+            <label for="partially.9">Partially</label>
+            <input type="radio" id="no.9" name="form.9" value="No">
+            <label for="no.9">No</label>
+            <p>Are we within the two companies per year goal for LCL</p>
+            <input type="radio" id="yes.10" name="form.10" value="Yes">
+            <label for="yes.10">Yes</label>
+            <input type="radio" id="partially.10" name="form.10" value="Partially">
+            <label for="partially.10">Partially</label>
+            <input type="radio" id="no.10" name="form.10" value="No">
+            <label for="no.10">No</label><br>    
+            
+            <input type="submit" value="Submit All Data">
+        </form>
+        
+        <h2>Add Financial Data</h2>
+        <label for="questionInput">Financial Type:</label>
+        <input type="text" id="questionInput" name="questionInput" placeholder="Enter Financial Type">
+        <label for="answerInput">Financial Value:</label>
+        <input type="text" id="answerInput" name="answerInput" placeholder="Enter Financial Value">
+        <button type="button" onclick="addToTable('dynamicTable', 'financial_data')">Add to Financial Data Table</button>
+        <div id="tableContainer"></div>
+        
+        <h2>Additional Information:</h2>
+        <label for="additional_heading">Topic:</label>
+        <input type="text" id="additional_heading" name="additional_heading" placeholder="Enter Topic">
+        <label for="additional_answer">Information:</label>
+        <input type="text" id="additional_answer" name="additional_answer" placeholder="Enter Information">
+        <button type="button" onclick="addToTable3()">Add to Additional Information Table</button>
+        <div id="tableContainer3"></div>
+
+        <h2>Who Invested and How Much Did They Invest?</h2>
+        <label for="Person1">Person:</label>
+        <input type="text" id="Person1" name="Person1">
+        <label for="Value1">Amount:</label>
+        <input type="text" id="Value1" name="Value1">
+        <button type="button" onclick="addToTable2()">Add to Other Data Table</button>
+        <div id="tableContainer2"></div>
+    </main>
+    <a href="display_data.php">
+        <button>View Information</button>
+    </a>
+</body>
+</html>
+                

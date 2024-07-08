@@ -1,0 +1,89 @@
+<html>
+<head>
+    <title>View/Edit Existing Opportunity</title>
+    <style>
+        .main-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            margin-right: 5px; 
+        }
+        .logoimage {
+            width: 400px; 
+            height: auto; 
+            border: 2px solid #000;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.3); 
+        }
+        .buttonsize {
+            width: 250px; 
+            height: 25px;
+            border: 2px solid #000;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.3); 
+            background-color: darkorange;
+        }
+        .buttonsize2 {
+            width: 300px; 
+            height: 35px;
+            border: 2px solid #000;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.3); 
+            background-color: darkorange;
+        }
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            border: 2px solid #000;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.3); 
+            width: 50%;
+            margin-left: 0px;
+        }
+        .form-container h2 {
+            font-size: 24px;
+        }
+        .form-container input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<header style="background-color:#4d3227;">
+    <h1 style="text-align:center ; color:silver">View/Edit Existing Opportunity</h1>
+</header>
+<body style="background-color:#ebc999;">
+
+    <script>
+        function handleSubmit() {
+            var userInput = document.getElementById('comp_name').value;
+            localStorage.setItem('headingText', userInput);
+            window.location.href = 'info.display.html';
+        }
+    </script>
+    <div class="button-container">
+        <a href="home.html">
+            <button class="buttonsize">Home</button>
+        </a>
+        <br>
+        <a href="page2.html">
+            <button class="buttonsize">Add a New Opportunity</button>
+        </a>
+    </div>
+    
+    <div class="main-container">
+        <form onsubmit="handleSubmit(); return false;"class="form-container">
+            <label for="comp_name"><h2>Enter Business Name: </h2></label>
+            <input type="text" id="comp_name" name="comp_name" placeholder="ExampleLTD">
+            <input type="submit" class="buttonsize2" value="Submit and View Business Information">
+        </form>    
+        <div class="image-container">
+            <img src="img/Logo.jpg.JPG" alt="Logo" class="logoimage">
+        </div>
+    </div>
+</body>
+</html>
